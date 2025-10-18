@@ -1,0 +1,94 @@
+<div class="container py-3">
+    <div class="row g-4 align-items-stretch">
+        <!-- Left: Large Image -->
+        <div class="col-12 col-lg-6 col-xl-7">
+            <div class="rounded overflow-hidden shadow-sm h-100" style="height:60vh;">
+                <img src="assets/images/kashmir.png" alt="Scenic Kashmir village by a river in the Himalayas"
+                    class="w-100 h-100" loading="lazy" style="object-fit:cover;" />
+            </div>
+        </div>
+
+        <!-- Right: Teaching Content -->
+        <div class="col-12 col-lg-6 col-xl-5 d-flex flex-column">
+
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+                    <h1 class="card-title h3 mb-2">OpenID Connect (OIDC) — What &amp; Why</h1>
+                    <p class="card-text">
+                        <strong>OpenID Connect</strong> is an identity layer on top of OAuth 2.0.
+                        It lets a client application verify a user’s identity and obtain profile information
+                        in a standard, interoperable way. OIDC adds the <em>ID Token</em>, a signed token that
+                        tells the client who the user is, plus a <em>UserInfo</em> endpoint for additional claims.
+                    </p>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+                    <h2 class="h5 mb-2">Key Roles</h2>
+                    <ul class="mb-0">
+                        <li><strong>End-User</strong>: The person who is authenticating.</li>
+                        <li><strong>Relying Party (RP)</strong>: Your app (SPA) that needs to know who the user is.</li>
+                        <li><strong>OpenID Provider (OP)</strong>: The identity server that authenticates users and
+                            issues tokens (e.g., Keycloak).</li>
+                        <li><strong>Protected API</strong>: Optional backend that accepts the OAuth <em>access
+                                token</em> for data access.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+                    <h2 class="h5 mb-2">How OIDC Works (SPA-friendly)</h2>
+                    <ol class="mb-0">
+                        <li><strong>Authorization Code + PKCE</strong>: The RP sends the user to the OP’s authorize page
+                            with <code>scope=openid</code> (and often <code>profile email</code>).</li>
+                        <li><strong>Callback</strong>: After login/consent, the OP redirects back with a <em>code</em>.
+                        </li>
+                        <li><strong>Token Exchange</strong>: The client exchanges the code for tokens: <em>ID Token</em>
+                            (who the user is), <em>Access Token</em> (call APIs), and optionally a <em>Refresh
+                                Token</em>.</li>
+                        <li><strong>Claims</strong>: The client reads user claims from the ID Token and/or the
+                            <em>UserInfo</em> endpoint.
+                        </li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+                    <h2 class="h5 mb-2">Tokens &amp; Endpoints</h2>
+                    <ul class="mb-2">
+                        <li><strong>ID Token</strong>: JWT that asserts the user’s identity (subject, issuer,
+                            <code>nonce</code>, etc.). For the client.
+                        </li>
+                        <li><strong>Access Token</strong>: Presented to APIs for authorization. Short-lived.</li>
+                        <li><strong>Refresh Token</strong>: (if issued) Used to obtain new tokens without re-login.</li>
+                    </ul>
+                    <ul class="mb-0">
+                        <li><strong>Discovery</strong>: <code>/.well-known/openid-configuration</code> publishes all OP
+                            endpoints and capabilities.</li>
+                        <li><strong>UserInfo</strong>: Standard endpoint to fetch additional user claims with the access
+                            token.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h2 class="h5 mb-2">Scopes &amp; Claims</h2>
+                    <ul class="mb-0">
+                        <li><strong>Scopes</strong>: <code>openid</code> (required), plus <code>profile</code>,
+                            <code>email</code>, etc. control which claims you get.
+                        </li>
+                        <li><strong>Claims</strong>: Attributes about the user (e.g., <code>sub</code>,
+                            <code>name</code>, <code>preferred_username</code>, <code>email</code>), delivered in the ID
+                            Token or via UserInfo.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

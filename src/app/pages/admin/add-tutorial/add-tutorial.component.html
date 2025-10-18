@@ -1,0 +1,111 @@
+<!-- <div>
+    <div class="submit-form">
+      <div *ngIf="!submitted">
+        <div class="form-group">
+          <label for="title">Title</label>
+          <input
+            type="text"
+            class="form-control"
+            id="title"
+            required
+            [(ngModel)]="tutorial.title"
+            name="title"
+          />
+        </div>
+        <div class="form-group">
+          <label for="description">Description</label>
+          <input
+            class="form-control"
+            id="description"
+            required
+            [(ngModel)]="tutorial.description"
+            name="description"
+          />
+        </div>
+        <button (click)="saveTutorial()" class="btn btn-success">Submit</button>
+      </div>
+      <div *ngIf="submitted">
+        <h4>Tutorial was submitted successfully!</h4>
+        <button class="btn btn-success" (click)="newTutorial()">Add</button>
+      </div>
+    </div>
+  </div> -->
+
+  <div class="container py-4">
+    <div class="row justify-content-center">
+      <div class="col-12 col-lg-8 col-xl-6">
+        <div class="card shadow-sm">
+          <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Add Tutorial</h5>
+          </div>
+  
+          <div class="card-body">
+            <!-- Form state: not submitted -->
+            <form *ngIf="!submitted" #f="ngForm" (ngSubmit)="saveTutorial()" novalidate>
+  
+              <!-- Title -->
+              <div class="mb-3">
+                <label for="title" class="form-label">Title <span class="text-danger">*</span></label>
+                <input id="title" type="text" class="form-control" name="title" [(ngModel)]="tutorial.title" required
+                  minlength="2" #titleCtrl="ngModel"
+                  [class.is-invalid]="titleCtrl.invalid && (titleCtrl.dirty || titleCtrl.touched)" />
+                <div class="invalid-feedback" *ngIf="titleCtrl.errors?.['required']">
+                  Title is required.
+                </div>
+                <div class="invalid-feedback" *ngIf="titleCtrl.errors?.['minlength']">
+                  Title must be at least 2 characters.
+                </div>
+              </div>
+  
+              <!-- Description -->
+              <div class="mb-3">
+                <label for="description" class="form-label">Description <span class="text-danger">*</span></label>
+                <textarea id="description" class="form-control" name="description" rows="4"
+                  [(ngModel)]="tutorial.description" required minlength="5" #descCtrl="ngModel"
+                  [class.is-invalid]="descCtrl.invalid && (descCtrl.dirty || descCtrl.touched)"></textarea>
+                <div class="invalid-feedback" *ngIf="descCtrl.errors?.['required']">
+                  Description is required.
+                </div>
+                <div class="invalid-feedback" *ngIf="descCtrl.errors?.['minlength']">
+                  Description must be at least 5 characters.
+                </div>
+              </div>
+  
+              <!-- Actions -->
+              <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary" [disabled]="f.invalid">
+                  <i class="bi bi-check2-circle me-1"></i> Submit
+                </button>
+  
+                <!-- Cancel: clears the form or navigates away (see TS below) -->
+                <button type="button" class="btn btn-outline-secondary" (click)="cancel(f)">
+                  <i class="bi bi-x-circle me-1"></i> Cancel
+                </button>
+              </div>
+            </form>
+  
+            <!-- Form state: submitted -->
+            <div *ngIf="submitted" class="text-center py-3">
+              <div class="alert alert-success d-inline-flex align-items-center" role="alert">
+                <span class="me-2">✅</span>
+                <div class="text-start">Tutorial was submitted successfully!</div>
+              </div>
+  
+              <div class="d-flex justify-content-center gap-2 mt-3">
+                <button class="btn btn-success" (click)="newTutorial()">
+                  Add Another
+                </button>
+                <a routerLink="/tutorials" class="btn btn-outline-primary">
+                  Back to List
+                </a>
+              </div>
+            </div>
+          </div>
+  
+          <div class="card-footer text-muted small">
+            Fields marked <span class="text-danger">*</span> are required.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

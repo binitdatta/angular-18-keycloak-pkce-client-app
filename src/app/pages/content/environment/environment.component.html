@@ -1,0 +1,141 @@
+<div class="container py-3">
+    <div class="row g-4 align-items-stretch">
+
+        <!-- Image (top) -->
+        <div class="col-12">
+            <div class="rounded overflow-hidden shadow-sm" style="height:70vh;">
+                <img src="assets/images/vizag-1.png" alt="Angular environments banner" class="w-100 h-100"
+                    loading="lazy" style="object-fit:cover;" />
+            </div>
+        </div>
+
+        <!-- Cards (full width, larger font) -->
+        <div class="col-12 fs-5 lh-lg">
+
+            <!-- What environment.ts is -->
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+                    <h1 class="card-title h4 mb-2">Angular <code>environment.ts</code> — What It Is</h1>
+                    <p class="mb-2">
+                        The <code>environment.ts</code> file contains <strong>build-time</strong> config for
+                        development,
+                        like feature flags and service URLs. You import it with
+                        <code>import &#123; environment &#125; from 'src/environments/environment'</code> from any
+                        component,
+                        service, or guard.
+                    </p>
+                    <p class="mb-0 text-muted small">
+                        Values are compile-time constants that end up baked into your JavaScript bundle.
+                    </p>
+                </div>
+            </div>
+
+            <!-- How ng serve uses it -->
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+                    <h2 class="h5 mb-2">How <code>ng serve</code> Uses It (Dev)</h2>
+                    <ul class="mb-0">
+                        <li><strong>Default import:</strong> In dev, imports of
+                            <code>src/environments/environment</code>
+                            resolve to <code>environment.ts</code> with <code>production: false</code>.</li>
+                        <li><strong>Live reload:</strong> Edits to <code>environment.ts</code> trigger a rebuild and hot
+                            reload.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- File replacement for prod -->
+            <div class="card shadow-sm mb-3">
+                <div class="card-body" ngNonBindable>
+                    <h2 class="h5 mb-2">Production Builds &amp; File Replacements</h2>
+                    <p class="mb-2">
+                        When you run <code>ng build --configuration production</code>, the CLI swaps files using
+                        <code>angular.json</code> <em>fileReplacements</em>, replacing
+                        <code>environment.ts</code> with <code>environment.prod.ts</code>.
+                    </p>
+                    <pre class="bg-light p-2 rounded mb-2"><code>// angular.json (excerpt)
+"configurations": &#123;
+  "production": &#123;
+    "fileReplacements": [
+      &#123;
+        "replace": "src/environments/environment.ts",
+        "with": "src/environments/environment.prod.ts"
+      &#125;
+    ]
+  &#125;
+&#125;</code></pre>
+                    <pre class="bg-light p-2 rounded mb-0"><code>// src/environments/environment.prod.ts
+export const environment = &#123;
+  production: true,
+  keycloak: &#123;
+    enable: true,
+    authority: 'https://login.example.com',
+    redirectUri: 'https://app.example.com',
+    postLogoutRedirectUri: 'https://app.example.com/logout',
+    realm: 'pkce_realm',
+    clientId: 'pkce_client',
+  &#125;,
+&#125;;</code></pre>
+                </div>
+            </div>
+
+            <!-- How values are injected / bundled -->
+            <div class="card shadow-sm mb-3">
+                <div class="card-body" ngNonBindable>
+                    <h2 class="h5 mb-2">How Values End Up in the JS Bundle</h2>
+                    <ol class="mb-2">
+                        <li><strong>Transpilation:</strong> TypeScript compiles your code; <code>environment</code> is a
+                            plain const.</li>
+                        <li><strong>Bundling:</strong> The builder inlines that const wherever it’s referenced (constant
+                            folding).</li>
+                        <li><strong>Optimization:</strong> Unused branches like
+                            <code>if (environment.production) &#123; ... &#125;</code>
+                            can be tree-shaken.</li>
+                    </ol>
+                    <p class="mb-0 text-muted small">
+                        These are <em>not</em> OS env vars. They are static values shipped to the browser.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Example usage -->
+            <div class="card shadow-sm mb-3">
+                <div class="card-body" ngNonBindable>
+                    <h2 class="h5 mb-2">Example: Using Environment in a Service</h2>
+                    <pre class="bg-light p-2 rounded mb-2"><code>import &#123; Injectable &#125; from '&#64;angular/core';
+import &#123; HttpClient &#125; from '&#64;angular/common/http';
+import &#123; environment &#125; from 'src/environments/environment';
+
+&#64;Injectable(&#123; providedIn: 'root' &#125;)
+export class AuthBootstrapService &#123;
+  constructor(private http: HttpClient) &#123;&#125;
+
+  initKeycloak() &#123;
+    const cfg = environment.keycloak;
+    // Use cfg.authority, cfg.realm, cfg.clientId, etc.
+  &#125;
+&#125;</code></pre>
+                    <p class="mb-0 text-muted small">Same import works in dev and prod; the file behind it changes per
+                        build configuration.</p>
+                </div>
+            </div>
+
+            <!-- Security & runtime config tips -->
+            <div class="card shadow-sm">
+                <div class="card-body" ngNonBindable>
+                    <h2 class="h5 mb-2">Security &amp; Runtime Tips</h2>
+                    <ul class="mb-2">
+                        <li><strong>Don’t store secrets</strong> in environment files—bundled code is public.</li>
+                        <li>For <strong>runtime</strong> config, load <code>/assets/app-config.json</code> at startup or
+                            inject a
+                            <code>window.__APP_CONFIG__</code> via server HTML.
+                        </li>
+                    </ul>
+                    <pre class="bg-light p-2 rounded mb-0"><code>// assets/app-config.json
+&#123; "apiBase": "/api", "authority": "https://login.example.com" &#125;</code></pre>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

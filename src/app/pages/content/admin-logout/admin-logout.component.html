@@ -1,0 +1,90 @@
+<div class="container py-3">
+    <div class="row g-4 align-items-stretch">
+
+        <!-- Hero image (optional) -->
+        <div class="col-12">
+            <div class="rounded overflow-hidden shadow-sm" style="height:60vh;">
+                <img src="assets/images/bengal-1.png" alt="Admin logout overview" class="w-100 h-100"
+                    loading="lazy" style="object-fit:cover;" />
+            </div>
+        </div>
+
+        <!-- Cards (full width) -->
+        <div class="col-12 fs-5 lh-lg">
+
+            <!-- What this page is about -->
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+                    <h1 class="card-title h4 mb-2">Admin Logout — Component &amp; Guard</h1>
+                    <p class="mb-0">
+                        This page shows a simple <em>logout success</em> component and a <em>LogoutRouteGuard</em> that
+                        prevents
+                        navigating to the logout screen when the user is still authenticated (redirects home instead).
+                    </p>
+                </div>
+            </div>
+
+            <!-- Admin Logout Component (safe code block) -->
+            <div class="card shadow-sm mb-3">
+                <div class="card-body" ngNonBindable>
+                    <h2 class="h5 mb-2">Admin Logout Component (Example)</h2>
+                    <pre class="mb-0 bg-light p-2 rounded"><code>import &#123; Component &#125; from "&#64;angular/core";
+
+&#64;Component(&#123;
+  selector: 'app-admin-logout',
+  template: `
+    &lt;div class="content"&gt;
+      &lt;h3&gt;Logout Successful&lt;/h3&gt;
+      &lt;p&gt;You have been signed out.&lt;/p&gt;
+    &lt;/div&gt;
+  `
+&#125;)
+export class AdminLogoutComponent &#123; &#125;</code></pre>
+                </div>
+            </div>
+
+            <!-- LogoutRouteGuard (safe code block) -->
+            <div class="card shadow-sm mb-3">
+                <div class="card-body" ngNonBindable>
+                    <h2 class="h5 mb-2">LogoutRouteGuard (Example)</h2>
+                    <p class="mb-2">
+                        If the user is already logged out, the route is allowed. If still logged in, it redirects to
+                        <code>Home</code>.
+                    </p>
+                    <pre class="mb-0 bg-light p-2 rounded"><code>import &#123; inject &#125; from "&#64;angular/core";
+import &#123; CanActivateFn, Router &#125; from "&#64;angular/router";
+import &#123; AppRoutes &#125; from "../app-routing.module";
+import &#123; AuthenticationService &#125; from "../services/authentication.service";
+
+export const LogoutRouteGuard: CanActivateFn = () =&gt; &#123;
+  const authenticationService = inject(AuthenticationService);
+  const router = inject(Router);
+
+  if (!authenticationService.isLoggedIn()) &#123;
+    return true; // already logged out, allow navigation
+  &#125; else &#123;
+    return router.createUrlTree([AppRoutes.Home]); // still logged in, redirect to Home
+  &#125;
+&#125;;</code></pre>
+                </div>
+            </div>
+
+            <!-- How to wire it (safe code block) -->
+            <div class="card shadow-sm">
+                <div class="card-body" ngNonBindable>
+                    <h2 class="h5 mb-2">Wiring in Routes</h2>
+                    <pre class="mb-2 bg-light p-2 rounded"><code>const routes: Routes = [
+  // Only show logout page when NOT authenticated
+  &#123; path: 'logout', canActivate: [LogoutRouteGuard], component: AdminLogoutComponent &#125;,
+  // ...
+];</code></pre>
+                    <p class="mb-0 text-muted small">
+                        Remember to declare or import the component, and export the guard from a file the router can
+                        import.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

@@ -1,0 +1,61 @@
+<div class="container py-3">
+    <div class="row g-4 align-items-stretch">
+        <!-- Left: Larger Image -->
+        <div class="col-12 col-lg-6 col-xl-7">
+            <!-- <div class="rounded overflow-hidden shadow-sm h-100" style="height:75vh;">
+                <img src="assets/images/montana.png" alt="Scenic Swiss village by a river in the Alps" class="w-100 h-100"
+                    loading="lazy" style="object-fit:cover;" />
+            </div> -->
+            <div class="rounded overflow-hidden shadow-sm h-150" style="height:90vh;width:60vh;">
+                <img src="assets/images/india-uk.png" class="w-100 h-100" style="object-fit:cover" />
+            </div>
+        </div>
+
+        <!-- Right: Taller Cards -->
+        <div class="col-12 col-lg-6 col-xl-5 d-flex flex-column">
+            <div class="card shadow-sm mb-3">
+                <div class="card-body" style="min-height: 12rem;">
+                    <h1 class="card-title h3 mb-2">PKCE (Proof Key for Code Exchange)</h1>
+                    <p class="card-text">
+                        PKCE protects the Authorization Code flow for public clients (SPAs, mobile) by binding the
+                        authorization code to a one-time secret only the client knows.
+                    </p>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mb-3">
+                <div class="card-body" style="min-height: 12rem;">
+                    <h2 class="h5 mb-2">How it works</h2>
+                    <ol class="mb-0">
+                        <li>Generate a high-entropy <em>code_verifier</em> on the client.</li>
+                        <li>Compute <code>code_challenge = BASE64URL(SHA256(code_verifier))</code>.</li>
+                        <li>Send the <em>code_challenge</em> with the authorization request.</li>
+                        <li>Exchange the code at the token endpoint by sending the original <em>code_verifier</em>.</li>
+                        <li>The server recomputes and compares; if it matches, tokens are issued.</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mb-3">
+                <div class="card-body" style="min-height: 10rem;">
+                    <h2 class="h5 mb-2">In <code>keycloak-js</code></h2>
+                    <p class="mb-0">
+                        Enable with <code>pkceMethod: 'S256'</code> in
+                        <code>keycloak.init(&lbrace; pkceMethod: 'S256' &rbrace;)</code>.
+                    </p>
+                </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-body" style="min-height: 10rem;">
+                    <h2 class="h5 mb-2">Tips</h2>
+                    <ul class="mb-0">
+                        <li>Use HTTPS.</li>
+                        <li>Keep access tokens short-lived; use refresh tokens carefully.</li>
+                        <li>Don’t send refresh tokens to APIs.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

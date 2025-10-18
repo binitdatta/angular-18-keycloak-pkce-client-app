@@ -1,0 +1,198 @@
+<div class="container py-3">
+    <div class="row g-4 align-items-stretch">
+
+        <!-- Hero image -->
+        <div class="col-12">
+            <div class="rounded overflow-hidden shadow-sm" style="height:70vh;">
+                <img src="assets/images/anadaman.png" alt="Getting started with Angular projects banner"
+                    class="w-100 h-100" loading="lazy" style="object-fit:cover;" />
+            </div>
+        </div>
+
+        <!-- Content cards (full width, larger font) -->
+        <div class="col-12 fs-5 lh-lg">
+
+            <!-- 1) Create a non-standalone Angular project -->
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+                    <h1 class="card-title h4 mb-2">Start a New Angular Project (Non-Standalone)</h1>
+                    <p class="mb-2">
+                        Create a classic <strong>NgModule-based</strong> project by passing
+                        <code>--standalone=false</code>.
+                    </p>
+                    <pre class="bg-light p-2 rounded mb-2" ngNonBindable><code># Install Angular CLI (if needed)
+npm i -g &#64;angular/cli
+
+# Create a new project using NgModules
+ng new my-app --standalone=false
+
+# Run the dev server
+cd my-app
+ng serve -o</code></pre>
+                    <p class="mb-0 text-muted small">
+                        This scaffolds <code>AppModule</code>, classic <code>main.ts</code> bootstrapping, and a
+                        conventional <code>src/</code> tree.
+                    </p>
+                </div>
+            </div>
+
+            <!-- 2) package.json -->
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+                    <h2 class="h5 mb-2"><code>package.json</code> — Dependencies &amp; Scripts</h2>
+                    <pre class="bg-light p-2 rounded mb-2" ngNonBindable><code>&#123;
+  "name": "my-app",
+  "version": "0.0.0",
+  "scripts": &#123;
+    "start": "ng serve",
+    "build": "ng build",
+    "test": "ng test",
+    "lint": "ng lint"
+  &#125;,
+  "private": true,
+  "dependencies": &#123;
+    "&#64;angular/animations": "X.Y.Z",
+    "&#64;angular/common": "X.Y.Z",
+    "&#64;angular/core": "X.Y.Z",
+    "&#64;angular/platform-browser": "X.Y.Z",
+    "rxjs": "^7",
+    "tslib": "^2",
+    "zone.js": "~0.14"
+  &#125;,
+  "devDependencies": &#123;
+    "&#64;angular/cli": "X.Y.Z",
+    "&#64;angular/compiler-cli": "X.Y.Z",
+    "typescript": "~5"
+  &#125;
+&#125;</code></pre>
+                </div>
+            </div>
+
+            <!-- 3) angular.json -->
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+                    <h2 class="h5 mb-2"><code>angular.json</code> — Workspace &amp; Build Targets</h2>
+                    <p class="mb-2">Key parts are encoded so Angular doesn’t parse them.</p>
+                    <pre class="bg-light p-2 rounded mb-2" ngNonBindable><code>&#123;
+  "$schema": "./node_modules/&#64;angular/cli/lib/config/schema.json",
+  "version": 1,
+  "projects": &#123;
+    "my-app": &#123;
+      "projectType": "application",
+      "root": "",
+      "sourceRoot": "src",
+      "architect": &#123;
+        "build": &#123;
+          "builder": "&#64;angular-devkit/build-angular:browser",
+          "options": &#123;
+            "outputPath": "dist/my-app",
+            "index": "src/index.html",
+            "main": "src/main.ts",
+            "polyfills": ["zone.js"],
+            "assets": ["src/favicon.ico", "src/assets"],
+            "styles": ["src/styles.css"],
+            "scripts": []
+          &#125;,
+          "configurations": &#123;
+            "production": &#123;
+              "optimization": true,
+              "outputHashing": "all",
+              "budgets": [&#123; "type": "initial", "maximumWarning": "500kb" &#125;]
+            &#125;
+          &#125;
+        &#125;,
+        "serve": &#123; "builder": "&#64;angular-devkit/build-angular:dev-server" &#125;
+      &#125;
+    &#125;
+  &#125;,
+  "defaultProject": "my-app"
+&#125;</code></pre>
+                </div>
+            </div>
+
+            <!-- 4) polyfills.ts -->
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+                    <h2 class="h5 mb-2"><code>polyfills.ts</code> — Browser Shims</h2>
+                    <pre class="bg-light p-2 rounded mb-2" ngNonBindable><code>/******************************************************************
+ * Add browser polyfills if needed. Modern Angular often lists them
+ * directly in angular.json ("polyfills": ["zone.js"]).
+ ******************************************************************/
+import 'zone.js'; // Required by Angular</code></pre>
+                </div>
+            </div>
+
+            <!-- 5) main.ts (NgModule bootstrap) -->
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+                    <h2 class="h5 mb-2"><code>main.ts</code> — Bootstrapping with <code>AppModule</code></h2>
+                    <pre class="bg-light p-2 rounded mb-2" ngNonBindable><code>import &#123; platformBrowserDynamic &#125; from '&#64;angular/platform-browser-dynamic';
+            import &#123; AppModule &#125; from './app/app.module';
+
+            platformBrowserDynamic()
+            .bootstrapModule(AppModule)
+            .catch(err =&gt; console.error(err));</code></pre>
+                </div>
+            </div>
+
+            <!-- 6) Project structure -->
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+                    <h2 class="h5 mb-2">Project Structure</h2>
+                    <pre class="bg-light p-2 rounded mb-2" ngNonBindable><code>my-app/
+├─ angular.json
+├─ package.json
+├─ tsconfig*.json
+├─ src/
+│  ├─ main.ts
+│  ├─ index.html
+│  ├─ styles.css (or .scss)
+│  ├─ assets/
+│  └─ app/
+│     ├─ app.module.ts
+│     ├─ app.component.*
+│     └─ app-routing.module.ts (if routing was selected)</code></pre>
+                </div>
+            </div>
+
+            <!-- 7) index.html -->
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+                    <h2 class="h5 mb-2"><code>index.html</code> — App Shell</h2>
+                    <pre class="bg-light p-2 rounded mb-2" ngNonBindable><code>&lt;!doctype html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="utf-8"&gt;
+  &lt;title&gt;My App&lt;/title&gt;
+  &lt;base href="/"&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;app-root&gt;&lt;/app-root&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+                </div>
+            </div>
+
+            <!-- 8) Build process -->
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h2 class="h5 mb-2">Build &amp; Serve</h2>
+                    <ol class="mb-2">
+                        <li>TypeScript compiled to JS with Angular compiler.</li>
+                        <li>Bundled &amp; optimized by the Angular CLI builder.</li>
+                        <li>Assets copied from <code>src/assets</code>; styles injected globally.</li>
+                        <li>File replacements can swap environments for production.</li>
+                        <li>Output in <code>dist/my-app</code>, ready to deploy.</li>
+                    </ol>
+                    <pre class="bg-light p-2 rounded mb-0" ngNonBindable><code># Dev (with HMR-like live reload)
+ng serve
+
+# Production (optimized)
+ng build --configuration production</code></pre>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

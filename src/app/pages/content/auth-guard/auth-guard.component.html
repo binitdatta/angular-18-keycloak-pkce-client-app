@@ -1,0 +1,125 @@
+<div class="container py-3">
+    <div class="row g-4 align-items-stretch">
+
+        <!-- Image (top) -->
+        <div class="col-12">
+            <div class="rounded overflow-hidden shadow-sm" style="height:70vh;">
+                <img src="assets/images/srinagar-jandkindia-o.png" alt="Guard explanation banner" class="w-100 h-100"
+                    loading="lazy" style="object-fit:cover;" />
+            </div>
+        </div>
+
+        <!-- Cards (full width, larger font) -->
+        <div class="col-12 fs-5 lh-lg">
+
+            <!-- What this guard is -->
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+                    <h1 class="card-title h4 mb-2">Auth Guard (Functional) — What It Does</h1>
+                    <p class="mb-2">
+                        The guard is a <strong>functional</strong> <code>CanActivateFn</code> that checks whether the
+                        user is authenticated <em>before</em> activating a route. It uses Angular’s
+                        <code>inject()</code> to pull in your <code>AuthenticationService</code> on demand, then
+                        decides:
+                    </p>
+                    <ul class="mb-2">
+                        <li><strong>Allowed:</strong> if <code>isLoggedIn()</code> is <code>true</code>, navigation
+                            proceeds.</li>
+                        <li><strong>Blocked + Redirect:</strong> otherwise it calls <code>redirectToLoginPage()</code>
+                            and returns
+                            <code>false</code> to cancel the navigation.
+                        </li>
+                    </ul>
+                    <p class="mb-0 text-muted small">This prevents access to protected routes unless the user is signed
+                        in.</p>
+                </div>
+            </div>
+
+            <!-- Code (as-is) -->
+            <div class="card shadow-sm mb-3">
+                <div class="card-body" ngNonBindable>
+                    <h2 class="h5 mb-2">Current Implementation</h2>
+                    <pre class="mb-0 bg-light p-2 rounded"><code>import &#123; inject &#125; from "&#64;angular/core";
+import &#123; CanActivateFn &#125; from "&#64;angular/router";
+import &#123; AuthenticationService &#125; from "../services/authentication.service";
+
+export const AuthGuard: CanActivateFn = (): boolean => &#123;
+  const authenticationService = inject(AuthenticationService);
+  if (authenticationService.isLoggedIn()) &#123;
+    return true;
+  &#125;
+  authenticationService.redirectToLoginPage();
+  return false;
+&#125;;</code></pre>
+                </div>
+            </div>
+
+            <!-- Recommended enhancement -->
+            <div class="card shadow-sm mb-3">
+                <div class="card-body" ngNonBindable>
+                    <h2 class="h5 mb-2">Recommended Enhancement (Return a UrlTree)</h2>
+                    <p class="mb-2">
+                        Returning a <code>UrlTree</code> lets the router perform the redirect without side effects
+                        inside the guard,
+                        and makes it easier to preserve the originally requested URL.
+                    </p>
+                    <pre class="mb-2 bg-light p-2 rounded"><code>import &#123; inject &#125; from "&#64;angular/core";
+import &#123; CanActivateFn, Router, UrlTree &#125; from "&#64;angular/router";
+import &#123; AuthenticationService &#125; from "../services/authentication.service";
+
+export const AuthGuard: CanActivateFn = (): boolean | UrlTree => &#123;
+  const auth = inject(AuthenticationService);
+  const router = inject(Router);
+
+  if (auth.isLoggedIn()) &#123;
+    return true;
+  &#125;
+
+  // Optionally preserve the attempted URL for redirect after login
+  const attempted = router.getCurrentNavigation()?.extractedUrl.toString() ?? '/';
+  return router.createUrlTree(['/login'], &#123; queryParams: &#123; returnUrl: attempted &#125; &#125;);
+&#125;;</code></pre>
+                    <p class="mb-0 text-muted small">
+                        Your <code>AuthenticationService</code> can still manage login, but the guard itself stays pure
+                        and predictable.
+                    </p>
+                </div>
+            </div>
+
+            <!-- How to use -->
+            <div class="card shadow-sm mb-3">
+                <div class="card-body" ngNonBindable>
+                    <h2 class="h5 mb-2">How to Use the Guard</h2>
+                    <ol class="mb-2">
+                        <li>Add it to route definitions:
+                            <pre class="bg-light p-2 rounded mb-2"><code>const routes: Routes = [
+  &#123; path: 'admin', canActivate: [AuthGuard], loadChildren: () => import('./admin/admin.routes').then(m => m.routes) &#125;,
+  &#123; path: 'profile', canActivate: [AuthGuard], component: ProfileComponent &#125;,
+];</code></pre>
+                        </li>
+                        <li>Ensure <code>AuthenticationService.isLoggedIn()</code> reflects your real state (token in
+                            memory, valid/expired checks, etc.).</li>
+                        <li>On login success, if using <code>returnUrl</code>, navigate back to it.</li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- Notes & tips -->
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h2 class="h5 mb-2">Notes &amp; Tips</h2>
+                    <ul class="mb-0">
+                        <li>If login state is async (e.g., token refresh), switch the guard to return
+                            <code>Observable&lt;boolean|UrlTree&gt;</code> and resolve the check.
+                        </li>
+                        <li>For lazy modules, consider <code>canLoad</code>/<code>canMatch</code> equivalents to block
+                            loading.</li>
+                        <li>Keep redirects centralized (single login route), and store/restore the attempted URL for a
+                            great UX.</li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

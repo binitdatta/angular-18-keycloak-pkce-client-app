@@ -1,0 +1,86 @@
+<div class="container py-3">
+    <div class="row g-4 align-items-stretch">
+        <!-- Left: Large Image -->
+        <div class="col-12 col-lg-6 col-xl-7">
+            <div class="rounded overflow-hidden shadow-sm h-150" style="height:90vh;">
+                <img src="assets/images/swiss.png" alt="Scenic Swiss village by a river in the Alps" class="w-100 h-100"
+                    loading="lazy" style="object-fit:cover;" />
+                <!-- <img ngSrc="/assets/images/swiss.png" alt="Scenic Swiss village by a river in the Alps" width="1600" height="900"
+                    class="w-100 h-100" style="object-fit:cover;" /> -->
+            </div>
+        </div>
+
+        <!-- Right: Teaching Content -->
+        <div class="col-12 col-lg-6 col-xl-5 d-flex flex-column">
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+                    <h1 class="card-title h3 mb-2">OAuth 2.0 — What &amp; Why</h1>
+                    <p class="card-text">
+                        <strong>OAuth 2.0</strong> lets an application (the <em>client</em>) obtain limited
+                        access to a protected API on behalf of a user, without learning the user’s password.
+                        It uses short-lived <em>tokens</em> to represent permission.
+                    </p>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+                    <h2 class="h5 mb-2">Key Roles</h2>
+                    <ul class="mb-0">
+                        <li><strong>Resource Owner</strong>: The user who owns the data.</li>
+                        <li><strong>Client</strong>: Your app or website that wants to access data.</li>
+                        <li><strong>Authorization Server</strong>: Issues tokens (e.g., Keycloak).</li>
+                        <li><strong>Resource Server</strong>: The API that validates tokens and serves data.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+                    <h2 class="h5 mb-2">Common Grants (Flows)</h2>
+                    <ol class="mb-0">
+                        <li>
+                            <strong>Authorization Code</strong> (web apps, supports PKCE):
+                            user signs in → app gets a code → exchanges for tokens.
+                        </li>
+                        <li>
+                            <strong>Client Credentials</strong> (machine-to-machine):
+                            app itself obtains a token to call backend services.
+                        </li>
+                        <li>
+                            <strong>Refresh Token</strong> (token, not a flow):
+                            used to obtain new access tokens without another login.
+                        </li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+                    <h2 class="h5 mb-2">Tokens</h2>
+                    <ul class="mb-0">
+                        <li><strong>Access Token</strong>: Presented to APIs; usually short-lived.</li>
+                        <li><strong>Refresh Token</strong>: Lets the client get new access tokens; never send it to
+                            APIs.</li>
+                        <li><strong>ID Token</strong>: (added by OIDC) describes the authenticated user for the client.
+                        </li>
+                    </ul>
+                    <p class="mb-0">
+                        <em>Tip:</em> Always use HTTPS, store tokens safely, and request only the scopes you need.
+                    </p>
+                </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h2 class="h5 mb-2">Best Practices</h2>
+                    <ul class="mb-0">
+                        <li>Prefer <strong>Authorization Code + PKCE</strong> for browser login.</li>
+                        <li>Keep access tokens short-lived; rotate refresh tokens.</li>
+                        <li>Follow least privilege with scopes.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

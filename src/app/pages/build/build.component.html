@@ -1,0 +1,186 @@
+<div class="container py-3" ngNonBindable>
+    <div class="row g-4 align-items-stretch">
+
+        <!-- Hero image -->
+        <div class="col-12">
+            <div class="rounded overflow-hidden shadow-sm" style="height:60vh;">
+                <img src="assets/images/yellowstone.png" alt="Angular build pipeline overview"
+                    class="w-100 h-100" loading="lazy" style="object-fit:cover;" />
+            </div>
+        </div>
+
+        <!-- Content cards (English only, no code) -->
+        <div class="col-12 fs-5 lh-lg">
+
+            <!-- What happens when you run ng serve -->
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+                    <h1 class="h4 mb-2">What happens when you run “ng serve”</h1>
+                    <ol class="mb-0">
+                        <li>The Angular CLI reads your workspace configuration and project settings.</li>
+                        <li>TypeScript sources are compiled to JavaScript using the project’s TypeScript configuration.
+                        </li>
+                        <li>Angular templates are analyzed and compiled into efficient view code.</li>
+                        <li>Your application is bundled in development mode with fast, incremental rebuilds and source
+                            maps.</li>
+                        <li>A local development server starts, usually on port 4200, serving the in-memory build.</li>
+                        <li>As you change files, only the affected pieces are rebuilt and the browser refreshes
+                            automatically.</li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- package.json and package-lock.json -->
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+                    <h2 class="h5 mb-2">package.json and package-lock.json</h2>
+                    <ul class="mb-0">
+                        <li><strong>package.json</strong> declares dependencies, scripts, and metadata. The Angular CLI,
+                            framework, and build tools are listed here.</li>
+                        <li><strong>package-lock.json</strong> locks exact versions that were installed, ensuring
+                            consistent, repeatable installs across machines.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Angular CLI and the builder -->
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+                    <h2 class="h5 mb-2">Angular CLI and the builder</h2>
+                    <p class="mb-0">
+                        The CLI orchestrates the build. It wires TypeScript compilation, template compilation, bundling,
+                        asset handling, and the dev server. In development, it favors speed and debuggability over heavy
+                        optimizations.
+                    </p>
+                </div>
+            </div>
+
+            <!-- main.ts and application bootstrap -->
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+                    <h2 class="h5 mb-2">main.ts and application bootstrap</h2>
+                    <p class="mb-0">
+                        This file is the bootstrap entry point that starts the Angular application. It tells Angular
+                        which root component to render and sets up the runtime environment used by the app in the
+                        browser.
+                    </p>
+                </div>
+            </div>
+
+            <!-- polyfills.ts and browser support -->
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+                    <h2 class="h5 mb-2">polyfills.ts and browser support</h2>
+                    <p class="mb-0">
+                        Polyfills bring modern JavaScript features to older browsers by loading compatibility shims. The
+                        dev build includes only what your configured browser targets require, improving compatibility
+                        without unnecessary weight.
+                    </p>
+                </div>
+            </div>
+
+            <!-- app.module.ts and dependency wiring -->
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+                    <h2 class="h5 mb-2">app.module.ts and dependency wiring</h2>
+                    <p class="mb-0">
+                        The root module declares core declarations and imports. It wires together routing, forms, HTTP,
+                        and any shared libraries. During bootstrap, Angular uses this module graph to construct
+                        dependency injection and component trees.
+                    </p>
+                </div>
+            </div>
+
+            <!-- app-routing.module.ts and page navigation -->
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+                    <h2 class="h5 mb-2">app-routing.module.ts and page navigation</h2>
+                    <p class="mb-0">
+                        Routing maps URLs to views. In development, the router works with the dev server to render pages
+                        without full page reloads, enabling a fast single-page application experience.
+                    </p>
+                </div>
+            </div>
+
+            <!-- app.component.* and the shell -->
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+                    <h2 class="h5 mb-2">app.component.ts, template, and styles</h2>
+                    <p class="mb-0">
+                        The root component forms the application shell, often hosting the navigation bar, layout, and a
+                        router outlet. Child components render inside it as users navigate the application.
+                    </p>
+                </div>
+            </div>
+
+            <!-- src folder and assets -->
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+                    <h2 class="h5 mb-2">The src folder and assets</h2>
+                    <ul class="mb-0">
+                        <li><strong>Application code</strong>: components, services, modules, and styles live here.</li>
+                        <li><strong>Assets</strong>: static images, icons, and other files are copied as-is to the build
+                            output.</li>
+                        <li><strong>Environments</strong>: development and production settings reside in environment
+                            files.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- index.html and the host page -->
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+                    <h2 class="h5 mb-2">index.html and the host page</h2>
+                    <p class="mb-0">
+                        The dev server serves a single host page. Angular mounts the application into the root element
+                        on this page, then client-side routing takes over for navigation.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Development build characteristics -->
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+                    <h2 class="h5 mb-2">Development build characteristics</h2>
+                    <ul class="mb-0">
+                        <li><strong>Fast rebuilds</strong>: incremental compilation and in-memory bundling for a quick
+                            feedback loop.</li>
+                        <li><strong>Source maps</strong>: line-accurate debugging in the browser developer tools.</li>
+                        <li><strong>Readable output</strong>: minimal minification and no heavy tree-shaking by default.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Production build differences -->
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+                    <h2 class="h5 mb-2">Production build differences</h2>
+                    <ul class="mb-0">
+                        <li><strong>Environment replacement</strong>: production settings are substituted automatically.
+                        </li>
+                        <li><strong>Optimizations</strong>: code is minified, unused code is removed, and bundles are
+                            optimized.</li>
+                        <li><strong>Asset hashing</strong>: long-term caching is enabled with content hashes in
+                            filenames.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Common pitfalls and tips -->
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h2 class="h5 mb-2">Common pitfalls and practical tips</h2>
+                    <ul class="mb-0">
+                        <li>Ensure dependencies install without warnings to avoid version drift problems.</li>
+                        <li>Keep the TypeScript configuration aligned with the Angular version.</li>
+                        <li>Place static files under the assets folder so the dev server can serve them reliably.</li>
+                        <li>Use distinct environment values for development and production.</li>
+                        <li>Prefer small, composable modules and lazy loading to keep startup fast.</li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

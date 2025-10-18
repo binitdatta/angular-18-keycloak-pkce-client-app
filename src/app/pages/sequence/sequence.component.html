@@ -1,0 +1,176 @@
+<div class="container py-3" ngNonBindable>
+    <div class="row g-4 align-items-stretch">
+
+        <!-- Hero image -->
+        <div class="col-12">
+            <div class="rounded overflow-hidden shadow-sm" style="height:70vh;">
+                <img src="assets/images/andaman.png" alt="App bootstrap & login sequence"
+                    class="w-100 h-100" loading="lazy" style="object-fit:cover;" />
+            </div>
+        </div>
+
+        <!-- Content cards -->
+        <div class="col-12 fs-5 lh-lg">
+
+            <!-- 1) environment.ts -->
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+                    <h2 class="h5 mb-2">1) environment.ts — runtime config</h2>
+                    <p class="mb-2">
+                        In development (<code>ng serve</code>) Angular uses <code>environment.ts</code>. Production
+                        builds can replace it with
+                        <code>environment.prod.ts</code> via file replacements.
+                    </p>
+                    <pre class="bg-light p-2 rounded"><code>// src/environments/environment.ts
+export const environment = &#123;
+  production: false,
+  keycloak: &#123;
+    enable: true,
+    authority: 'http://localhost:8080',
+    redirectUri: 'http://localhost:4200',
+    postLogoutRedirectUri: 'http://localhost:4200/logout',
+    realm: 'pkce_realm',
+    clientId: 'pkce_client',
+    apiBase: 'http://localhost:9045/api'
+  &#125;
+&#125;;</code></pre>
+                </div>
+            </div>
+
+            <!-- 2) AppModule + Keycloak init -->
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+                    <h2 class="h5 mb-2">2) AppModule — bootstrap & Keycloak init</h2>
+                    <p class="mb-2">
+                        Root module imports <code>HttpClientModule</code> and <code>KeycloakAngularModule</code>, then
+                        initializes Keycloak via
+                        <code>APP_INITIALIZER</code> so initial auth state is ready before the UI renders.
+                    </p>
+                    <pre class="bg-light p-2 rounded"><code>// src/app/app.module.ts (excerpt)
+imports: [
+  BrowserModule,
+  HttpClientModule,
+  KeycloakAngularModule,
+  AppRoutingModule,
+  FormsModule
+],
+providers: [
+  &#123;
+    provide: APP_INITIALIZER,
+    useFactory: initializeKeycloak,
+    multi: true,
+    deps: [KeycloakService]
+  &#125;
+]</code></pre>
+                    <p class="mb-0 text-muted small">
+                        With <code>onLoad: 'check-sso'</code> the app adopts an existing Keycloak session if present.
+                    </p>
+                </div>
+            </div>
+
+            <!-- 3) Routing -->
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+                    <h2 class="h5 mb-2">3) Routing — landing & protected routes</h2>
+                    <p class="mb-2">
+                        <code>AppRoutingModule</code> maps URLs; guards protect sensitive routes.
+                    </p>
+                    <pre class="bg-light p-2 rounded"><code>// src/app/app-routing.module.ts (snippet)
+const routes: Routes = [
+  &#123; path: '', redirectTo: 'tutorials', pathMatch: 'full' &#125;,
+  &#123; path: 'tutorials', component: TutorialsListComponent &#125;,
+  &#123; path: 'add', canActivate: [AuthGuard], component: AddTutorialComponent &#125;,
+  &#123; path: 'docs/customers', component: CustomersComponent &#125;,
+  &#123; path: '**', redirectTo: '404' &#125;
+];</code></pre>
+                </div>
+            </div>
+
+            <!-- 4) AuthenticationService -->
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+                    <h2 class="h5 mb-2">4) AuthenticationService — facade over Keycloak</h2>
+                    <p class="mb-2">
+                        Components call this service to login, logout, check auth state, and read the username, without
+                        touching Keycloak APIs directly.
+                    </p>
+                    <pre class="bg-light p-2 rounded"><code>// src/app/services/authentication.service.ts (excerpt)
+redirectToLoginPage(): Promise&lt;void&gt; &#123; return this.keycloakService.login(); &#125;
+get userName(): string &#123; try &#123; return this.keycloakService.getUsername() ?? ''; &#125; catch &#123; return ''; &#125; &#125;
+isLoggedIn(): boolean &#123; return this.keycloakService.isLoggedIn(); &#125;
+logout(): void &#123; this.keycloakService.logout(environment.keycloak.postLogoutRedirectUri); &#125;</code></pre>
+                </div>
+            </div>
+
+            <!-- 5) Navbar logic -->
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+                    <h2 class="h5 mb-2">5) Navbar — shows Login or user + Logout</h2>
+                    <p class="mb-2">
+                        The navbar queries the service. When logged in, it displays the username and a Logout button.
+                    </p>
+                    <pre class="bg-light p-2 rounded"><code><!-- app.component.html (snippet, escaped) -->
+&lt;ul class="navbar-nav ms-auto mb-2 mb-lg-0"&gt;
+  &lt;ng-container *ngIf="isLoggedIn(); else loginLink"&gt;
+    &lt;li class="nav-item"&gt;&lt;span class="nav-link text-light"&gt;&#123;&#123; username() &#125;&#125;&lt;/span&gt;&lt;/li&gt;
+    &lt;li class="nav-item"&gt;&lt;button class="btn btn-outline-light" (click)="logout()"&gt;Logout&lt;/button&gt;&lt;/li&gt;
+  &lt;/ng-container&gt;
+  &lt;ng-template #loginLink&gt;
+    &lt;li class="nav-item"&gt;&lt;button class="btn btn-outline-light" (click)="login()"&gt;Login&lt;/button&gt;&lt;/li&gt;
+  &lt;/ng-template&gt;
+&lt;/ul&gt;</code></pre>
+                </div>
+            </div>
+
+            <!-- 6) Sequence -->
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+                    <h2 class="h5 mb-2">6) Sequence: startup → login → return</h2>
+                    <ol class="mb-3">
+                        <li><strong>ng serve</strong> loads the dev <code>environment.ts</code>.</li>
+                        <li><strong>Bootstrap</strong>: <code>APP_INITIALIZER</code> runs and initializes Keycloak JS.
+                        </li>
+                        <li><strong>First render</strong>: Router shows landing + navbar; service reports auth state.
+                        </li>
+                        <li><strong>Login</strong>: Clicking Login calls <code>redirectToLoginPage()</code> and
+                            navigates to Keycloak.</li>
+                        <li><strong>Authenticate</strong> on Keycloak; it redirects to <code>redirectUri</code> with an
+                            auth code.</li>
+                        <li><strong>Exchange</strong>: Keycloak JS trades the code for tokens; session is ready.</li>
+                        <li><strong>UI updates</strong>: Navbar now shows the username; guards permit protected pages.
+                        </li>
+                        <li><strong>APIs</strong>: Services call Spring Boot at
+                            <code>environment.keycloak.apiBase</code>.</li>
+                    </ol>
+                    <pre class="bg-light p-2 rounded"><code>Browser           AppModule/Router             Keycloak JS            Keycloak
+   |                      |                         |                     |
+   | -- ng serve -------->|                         |                     |
+   |                      |  APP_INITIALIZER init   |-- discovery ------->|
+   |                      |                         |<-- config ----------|
+   |                      |  render navbar/landing  |                     |
+   | click Login          |-- AuthService.login() --|-- /authorize ----->|
+   |                      |                         |<-- redirect (code)--|
+   |                      |                         |-- /token ---------->|
+   |                      |                         |<-- tokens ----------|
+   |                      |  navbar shows username  |                     |
+   |  calls /api/... ---->|                         |                     |</code></pre>
+                </div>
+            </div>
+
+            <!-- 7) Customers service -->
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h2 class="h5 mb-2">7) Customers service — API base</h2>
+                    <p class="mb-2">
+                        Services read their base URL from <code>environment.keycloak.apiBase</code>.
+                    </p>
+                    <pre class="bg-light p-2 rounded"><code>private base = environment.keycloak.apiBase;  // http://localhost:9045/api
+getCustomers(): Promise&lt;Customer[]&gt; &#123;
+  return firstValueFrom(this.http.get&lt;Customer[]&gt;(`$&#123;this.base&#125;/downstream`));
+&#125;</code></pre>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

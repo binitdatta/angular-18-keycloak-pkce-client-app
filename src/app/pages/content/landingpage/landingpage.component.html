@@ -1,0 +1,348 @@
+<div class="container py-3">
+    <div class="row g-4 align-items-stretch">
+
+        <!-- Image (top) -->
+        <div class="col-12">
+            <div class="rounded overflow-hidden shadow-sm" style="height:70vh;">
+                <img src="assets/images/california-1.png" alt="Guard explanation banner" class="w-100 h-100"
+                    loading="lazy" style="object-fit:cover;" />
+            </div>
+        </div>
+
+        <!-- Cards (full width, larger font) -->
+        <div class="col-12 fs-5 lh-lg">
+
+            <!-- What this guard is -->
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+                    <h1 class="card-title h4 mb-2">Auth Guard (Functional) — What It Does</h1>
+                    <p class="mb-2">
+                        The guard is a <strong>functional</strong> <code>CanActivateFn</code> that checks whether the
+                        user is authenticated <em>before</em> activating a route. It uses Angular’s
+                        <code>inject()</code> to pull in your <code>AuthenticationService</code> on demand, then
+                        decides:
+                    </p>
+                    <ul class="mb-2">
+                        <li><strong>Allowed:</strong> if <code>isLoggedIn()</code> is <code>true</code>, navigation
+                            proceeds.</li>
+                        <li>
+                            <strong>Blocked + Redirect:</strong> otherwise it calls <code>redirectToLoginPage()</code>
+                            and returns <code>false</code> to cancel the navigation.
+                        </li>
+                    </ul>
+                    <p class="mb-0 text-muted small">This prevents access to protected routes unless the user is signed
+                        in.</p>
+                </div>
+            </div>
+
+            <!-- Code (as-is) -->
+            <div class="card shadow-sm mb-3">
+                <div class="card-body" ngNonBindable>
+                    <h2 class="h5 mb-2">Current Implementation</h2>
+                    <pre class="mb-0 bg-light p-2 rounded"><code>import &#123; inject &#125; from "&#64;angular/core";
+import &#123; CanActivateFn &#125; from "&#64;angular/router";
+import &#123; AuthenticationService &#125; from "../services/authentication.service";
+
+export const AuthGuard: CanActivateFn = (): boolean => &#123;
+  const authenticationService = inject(AuthenticationService);
+  if (authenticationService.isLoggedIn()) &#123;
+    return true;
+  &#125;
+  authenticationService.redirectToLoginPage();
+  return false;
+&#125;;</code></pre>
+                </div>
+            </div>
+
+            <!-- Recommended enhancement -->
+            <div class="card shadow-sm mb-3">
+                <div class="card-body" ngNonBindable>
+                    <h2 class="h5 mb-2">Recommended Enhancement (Return a UrlTree)</h2>
+                    <p class="mb-2">
+                        Returning a <code>UrlTree</code> lets the router perform the redirect without side effects
+                        inside the guard, and makes it easier to preserve the originally requested URL.
+                    </p>
+                    <pre class="mb-2 bg-light p-2 rounded"><code>import &#123; inject &#125; from "&#64;angular/core";
+import &#123; CanActivateFn, Router, UrlTree &#125; from "&#64;angular/router";
+import &#123; AuthenticationService &#125; from "../services/authentication.service";
+
+export const AuthGuard: CanActivateFn = (): boolean | UrlTree => &#123;
+  const auth = inject(AuthenticationService);
+  const router = inject(Router);
+
+  if (auth.isLoggedIn()) &#123;
+    return true;
+  &#125;
+
+  // Optionally preserve the attempted URL for redirect after login
+  const attempted = router.getCurrentNavigation()?.extractedUrl.toString() ?? '/';
+  return router.createUrlTree(['/login'], &#123; queryParams: &#123; returnUrl: attempted &#125; &#125;);
+&#125;;</code></pre>
+                    <p class="mb-0 text-muted small">
+                        Your <code>AuthenticationService</code> can still manage login, but the guard itself stays pure
+                        and predictable.
+                    </p>
+                </div>
+            </div>
+
+            <!-- How to use -->
+            <div class="card shadow-sm mb-3">
+                <div class="card-body" ngNonBindable>
+                    <h2 class="h5 mb-2">How to Use the Guard</h2>
+                    <ol class="mb-2">
+                        <li>Add it to route definitions:</li>
+                    </ol>
+                    <pre class="bg-light p-2 rounded mb-2"><code>const routes: Routes = [
+  &#123; path: 'admin', canActivate: [AuthGuard], loadChildren: () => import('./admin/admin.routes').then(m => m.routes) &#125;,
+  &#123; path: 'profile', canActivate: [AuthGuard], component: ProfileComponent &#125;,
+];</code></pre>
+                    <ol start="2" class="mb-2">
+                        <li>
+                            Ensure <code>AuthenticationService.isLoggedIn()</code> reflects your real state (token in
+                            memory, valid/expired checks, etc.).
+                        </li>
+                        <li>On login success, if using <code>returnUrl</code>, navigate back to it.</li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- Notes & tips -->
+            <div class="card shadow-sm">
+                <div class="card-body" ngNonBindable>
+                    <h2 class="h5 mb-2">Notes &amp; Tips</h2>
+                    <ul class="mb-0">
+                        <li>
+                            If login state is async (e.g., token refresh), switch the guard to return
+                            <code>Observable&lt;boolean|UrlTree&gt;</code> and resolve the check.
+                        </li>
+                        <li>For lazy modules, consider <code>canLoad</code>/<code>canMatch</code> equivalents to block
+                            loading.</li>
+                        <li>Keep redirects centralized (single login route), and store/restore the attempted URL for a
+                            great UX.</li>
+                    </ul>
+                </div>
+            </div>
+
+                <!-- What the AuthenticationService does -->
+                <div class="card shadow-sm mb-3">
+                    <div class="card-body">
+                        <h1 class="card-title h4 mb-2">AuthenticationService — What &amp; Why</h1>
+                        <p class="mb-2">
+                            This service centralizes all Keycloak calls for your Angular app. It wraps
+                            <code>keycloak-angular</code>’s <code>KeycloakService</code> so components don’t deal with low-level auth
+                            details.
+                        </p>
+                        <ul class="mb-2">
+                            <li><strong>Login</strong>: Redirects to Keycloak (OIDC Authorization Code + PKCE) and returns to your app.
+                            </li>
+                            <li><strong>Who am I?</strong>: Provides the current username via <code>getUsername()</code>.</li>
+                            <li><strong>Am I logged in?</strong>: Checks session state via <code>isLoggedIn()</code>.</li>
+                            <li><strong>Logout</strong>: Ends the session and returns users to <code>postLogoutRedirectUri</code> from
+                                <code>environment</code>.</li>
+                        </ul>
+                        <p class="mb-0 text-muted small">
+                            Tip: In <code>keycloak-angular</code> v16+, <code>isLoggedIn()</code> is <em>async</em>. Consider exposing
+                            an async API or an observable so templates always render accurate state.
+                        </p>
+                    </div>
+                </div>
+<!-- Current implementation -->
+<div class="card shadow-sm mb-3">
+    <div class="card-body" ngNonBindable>
+        <h2 class="h5 mb-2">AuthenticationService (Current Code)</h2>
+        <pre class="mb-0 bg-light p-2 rounded"><code>import &#123; Injectable &#125; from '&#64;angular/core';
+import &#123; KeycloakService &#125; from 'keycloak-angular';
+import &#123; environment &#125; from 'src/environments/environment';
+
+&#64;Injectable(&#123; providedIn: 'root' &#125;)
+export class AuthenticationService &#123;
+  constructor(private readonly keycloakService: KeycloakService) &#123;&#125;
+
+  redirectToLoginPage(): Promise&lt;void&gt; &#123;
+    return this.keycloakService.login();
+  &#125;
+
+  get userName(): string &#123;
+    return this.keycloakService.getUsername();
+  &#125;
+
+  // In keycloak-angular v16+, isLoggedIn() returns Promise&lt;boolean&gt;.
+  // If you keep it sync in your app, make sure your version supports it.
+  isLoggedIn(): boolean &#123;
+    return this.keycloakService.isLoggedIn() as unknown as boolean;
+  &#125;
+
+  logout(): void &#123;
+    this.keycloakService.logout(environment.keycloak.postLogoutRedirectUri);
+  &#125;
+&#125;</code></pre>
+    </div>
+</div>
+
+<!-- Usage in AppComponent -->
+<div class="card shadow-sm mb-3">
+    <div class="card-body" ngNonBindable>
+        <h2 class="h5 mb-2">Using It in AppComponent</h2>
+        <p class="mb-2">
+            The root component delegates UI events (login/logout) and reads auth state through the service.
+        </p>
+        <pre class="mb-0 bg-light p-2 rounded"><code>import &#123; Component, OnInit &#125; from '&#64;angular/core';
+import &#123; AuthenticationService &#125; from './services/authentication.service';
+
+&#64;Component(&#123;
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css'],
+&#125;)
+export class AppComponent implements OnInit &#123;
+  title = 'pkce-demo-angular-18-project';
+
+  constructor(private authService: AuthenticationService) &#123;&#125;
+
+  ngOnInit() &#123;&#125;
+
+  isLoggedIn() &#123;
+    return this.authService.isLoggedIn();
+  &#125;
+
+  username() &#123;
+    return this.authService.userName;
+  &#125;
+
+  logout() &#123;
+    this.authService.logout();
+  &#125;
+
+  login() &#123;
+    this.authService.redirectToLoginPage();
+  &#125;
+&#125;</code></pre>
+    </div>
+</div>
+
+<!-- Standalone page usage -->
+<div class="card shadow-sm mb-3">
+    <div class="card-body" ngNonBindable>
+        <h2 class="h5 mb-2">Using It in a Standalone Page</h2>
+        <p class="mb-2">
+            Show a “Log In” button only when the user is not authenticated.
+        </p>
+        <pre class="mb-2 bg-light p-2 rounded"><code>import &#123; NgIf &#125; from "&#64;angular/common";
+import &#123; Component &#125; from "&#64;angular/core";
+import &#123; AuthenticationService &#125; from "../services/authentication.service";
+
+&#64;Component(&#123;
+  selector: 'app-main-page',
+  standalone: true,
+  imports: [NgIf],
+  styleUrl: './main-page.component.scss',
+  template: `
+    &lt;div class="content"&gt;
+      &lt;span class="title"&gt;Main page&lt;/span&gt;
+    &lt;/div&gt;
+
+    &lt;a
+      *ngIf="!isLoggedIn"
+      role="button"
+      class="button"
+      (click)="redirectToLoginPage()"
+    &gt;Log In&lt;/a&gt;
+  `,
+&#125;)
+export class MainPageComponent &#123;
+  get isLoggedIn(): boolean &#123;
+    return this.authenticationService.isLoggedIn();
+  &#125;
+
+  constructor(private readonly authenticationService: AuthenticationService) &#123;&#125;
+
+  redirectToLoginPage(): void &#123;
+    this.authenticationService.redirectToLoginPage();
+  &#125;
+&#125;</code></pre>
+
+        <p class="mb-0 text-muted small">
+            If you switch <code>isLoggedIn()</code> to async, change the template to use <code>async</code> pipe
+            (e.g., <code>*ngIf="!(isLoggedIn$ | async)"</code>).
+        </p>
+    </div>
+</div>
+
+<!-- NEW: How DI injects into AppComponent and HomeComponent -->
+<div class="card shadow-sm mb-3">
+    <div class="card-body" ngNonBindable>
+        <h2 class="h5 mb-2">How Dependency Injection Works (AppComponent &amp; HomeComponent)</h2>
+        <p class="mb-2">
+            Angular’s DI creates a singleton <code>AuthenticationService</code> (because of
+            <code>providedIn: 'root'</code>) and
+            injects it wherever you ask for it in a constructor. Here’s how it looks in both the root component and a
+            typical
+            non-standalone <code>HomeComponent</code>.
+        </p>
+
+        <h6 class="mb-1">AppComponent (constructor injection)</h6>
+        <pre class="bg-light p-2 rounded mb-3"><code>export class AppComponent &#123;
+  constructor(private authService: AuthenticationService) &#123;&#125;
+
+  login() &#123; this.authService.redirectToLoginPage(); &#125;
+  logout() &#123; this.authService.logout(); &#125;
+  isLoggedIn() &#123; return this.authService.isLoggedIn(); &#125;
+  username() &#123; return this.authService.userName; &#125;
+&#125;</code></pre>
+
+        <h6 class="mb-1">HomeComponent (module-based, non-standalone)</h6>
+        <pre class="bg-light p-2 rounded mb-2"><code>import &#123; Component, OnInit &#125; from '&#64;angular/core';
+import &#123; AuthenticationService &#125; from '../services/authentication.service';
+
+&#64;Component(&#123;
+  selector: 'app-home',
+  templateUrl: './home.component.html',
+  styleUrls: ['./home.component.scss']
+&#125;)
+export class HomeComponent implements OnInit &#123;
+  user = '';
+  loggedIn = false;
+
+  constructor(private auth: AuthenticationService) &#123;&#125;
+
+  async ngOnInit() &#123;
+    // If your isLoggedIn() is async in v16+, prefer: this.loggedIn = await this.auth.isLoggedIn();
+    this.loggedIn = this.auth.isLoggedIn();
+    this.user = this.auth.userName;
+  &#125;
+
+  onLogin() &#123; this.auth.redirectToLoginPage(); &#125;
+  onLogout() &#123; this.auth.logout(); &#125;
+&#125;</code></pre>
+
+        <p class="mb-0 text-muted small">
+            The only requirement is that <code>AuthenticationService</code> is available via DI (it is, thanks to
+            <code>providedIn: 'root'</code>).
+            If you later move to standalone components everywhere, injection still works identically.
+        </p>
+    </div>
+</div>
+
+<!-- Recommended improvements -->
+<div class="card shadow-sm">
+    <div class="card-body" ngNonBindable>
+        <h2 class="h5 mb-2">Recommended Improvements</h2>
+        <ul class="mb-2">
+            <li><strong>Async correctness</strong> — In v16+, expose <code>isLoggedIn(): Promise&lt;boolean&gt;</code>
+                (or <code>isLoggedIn$</code> observable) to avoid stale UI.</li>
+            <li><strong>User profile</strong> — Add a helper that calls <code>keycloakService.loadUserProfile()</code>
+                and caches the result.</li>
+            <li><strong>Error handling</strong> — Wrap login/logout in try/catch and surface user-friendly errors.</li>
+            <li><strong>Guards</strong> — Pair this with an <code>AuthGuard</code> to protect routes.</li>
+        </ul>
+
+        <pre class="mb-0 bg-light p-2 rounded"><code>// Example async variant
+isLoggedIn(): Promise&lt;boolean&gt; &#123;
+  return this.keycloakService.isLoggedIn();
+&#125;</code></pre>
+    </div>
+</div>
+
+</div>
+</div>
+</div>

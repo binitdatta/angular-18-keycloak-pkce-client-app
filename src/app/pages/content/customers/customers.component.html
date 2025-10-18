@@ -1,0 +1,92 @@
+<!-- src/app/pages/content/customers-grid/customers-grid.component.html -->
+<div class="container py-3">
+    <!-- Header / actions -->
+    <!-- <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+        <div>
+            <h1 class="h4 mb-0">Customers</h1>
+            <div class="text-muted small">
+                Spring Boot @ <code>/api/downstream</code>
+                <ng-container *ngIf="me"> • Signed in as <strong>{{ me.name || me.username }}</strong></ng-container>
+            </div>
+        </div>
+        <div>
+            <button class="btn btn-primary btn-sm" (click)="reload()" [disabled]="loading">
+                {{ loading ? 'Loading…' : 'Reload' }}
+            </button>
+        </div>
+    </div> -->
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+        <div>
+            <h1 class="h4 mb-0">Customers</h1>
+            <div class="text-muted small">
+                Spring Boot &#64; <code>/api/downstream</code>
+                <ng-container *ngIf="me"> • Signed in as <strong>{{ me.name || me.username }}</strong></ng-container>
+            </div>
+        </div>
+        <div>
+            <button class="btn btn-primary btn-sm" (click)="reload()" [disabled]="loading">
+                {{ loading ? 'Loading…' : 'Reload' }}
+            </button>
+        </div>
+    </div>
+
+    <!-- Alerts -->
+    <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+    <!-- Table -->
+    <div class="card shadow-sm table-wrap">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width: 8%">ID</th>
+                            <th style="width: 22%">Name</th>
+                            <th style="width: 20%">Email</th>
+                            <th style="width: 14%">Phone</th>
+                            <th style="width: 16%">Location</th>
+                            <th style="width: 10%">Created</th>
+                            <th style="width: 10%" class="text-end">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngIf="!loading && customers.length === 0">
+                            <td colspan="7" class="text-center text-muted py-4">No data</td>
+                        </tr>
+
+                        <tr *ngFor="let c of customers">
+                            <td>{{ c.id }}</td>
+                            <td class="fw-medium">{{ c.name }}</td>
+                            <td><a [href]="'mailto:' + c.email">{{ c.email }}</a></td>
+                            <td>{{ c.phone }}</td>
+                            <td>{{ c.city }}, {{ c.state }} · {{ c.country }}</td>
+                            <td>{{ fmtDate(c.createdDate) }}</td>
+                            <td class="text-end">
+                                <span class="badge text-bg-success" *ngIf="c.active">
+                                    <span class="badge-dot bg-success"></span> Active
+                                </span>
+                                <span class="badge text-bg-secondary" *ngIf="!c.active">
+                                    <span class="badge-dot bg-secondary"></span> Inactive
+                                </span>
+                            </td>
+                        </tr>
+
+                        <!-- Loading skeleton row -->
+                        <tr *ngIf="loading">
+                            <td colspan="7" class="py-4">
+                                <div class="placeholder-glow">
+                                    <span class="placeholder col-12" style="height:1.5rem;"></span>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="small text-muted mt-2">
+                Data served by Spring Boot <code>/api/downstream</code>. User info (if present) comes from
+                <code>/api/me</code> via session cookie.
+            </div>
+        </div>
+    </div>
+</div>

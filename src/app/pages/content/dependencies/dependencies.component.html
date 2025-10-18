@@ -1,0 +1,121 @@
+<div class="container py-3">
+    <div class="row g-4 align-items-stretch">
+
+        <!-- Image (top) -->
+        <div class="col-12">
+            <div class="rounded overflow-hidden shadow-sm" style="height:90vh;">
+                <img src="assets/images/india-udhampur.png" alt="Large illustrative image placeholder"
+                    class="w-100 h-100" loading="lazy" style="object-fit:cover;" />
+            </div>
+        </div>
+
+        <!-- Cards (full width, larger font) -->
+        <div class="col-12 fs-5 lh-lg">
+
+            <!-- What these packages are -->
+            <div class="card shadow-sm mb-3">
+                <div class="card-body" style="min-height:12rem;">
+                    <h1 class="card-title h4 mb-2">Keycloak for Angular — Packages</h1>
+                    <p class="mb-2">
+                        <strong>keycloak-js <span class="text-muted">(v25.0.4)</span></strong>
+                        is the official, framework-agnostic JavaScript adapter that talks directly to the Keycloak
+                        server: builds login URLs, handles callbacks (<code>?code&amp;state</code>), manages tokens, and
+                        exposes helpers like <code>updateToken()</code>, <code>loadUserProfile()</code>, etc.
+                    </p>
+                    <p class="mb-0">
+                        <strong>keycloak-angular <span class="text-muted">(v16.0.1)</span></strong>
+                        is a thin Angular wrapper around <code>keycloak-js</code>. It adds Angular-friendly pieces:
+                        DI services, route guards, and an HTTP interceptor for attaching bearer tokens to API calls.
+                    </p>
+                </div>
+            </div>
+
+            <!-- How they work together -->
+            <div class="card shadow-sm mb-3">
+                <div class="card-body" style="min-height:12rem;">
+                    <h2 class="h5 mb-2">How They Work Together</h2>
+                    <ol class="mb-0">
+                        <li><strong>Init</strong> — Your app creates a <em>Keycloak</em> instance (via
+                            <code>keycloak-js</code>) and calls <code>kc.init()</code> (usually with PKCE).
+                        </li>
+                        <li><strong>Login</strong> — User is redirected to Keycloak; after login, Keycloak redirects
+                            back with <code>?code&amp;state</code>.
+                        </li>
+                        <li><strong>Token Exchange</strong> — The adapter completes the code→tokens exchange and stores
+                            <em>access</em>/<em>refresh</em>/<em>ID</em> tokens.
+                        </li>
+                        <li><strong>Angular Glue</strong> — <code>keycloak-angular</code> exposes an Angular
+                            service/guard and (optionally) an interceptor to add
+                            <code>Authorization: Bearer &lt;token&gt;</code> to outgoing HTTP calls.
+                        </li>
+                        <li><strong>Refresh</strong> — <code>keycloak-js</code> refreshes tokens before expiry
+                            (<code>updateToken()</code>), keeping the session alive.
+                        </li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- Version & compatibility notes -->
+            <div class="card shadow-sm mb-3">
+                <div class="card-body" style="min-height:10rem;">
+                    <h2 class="h5 mb-2">Version Notes &amp; Compatibility</h2>
+                    <ul class="mb-2">
+                        <li><strong>Server</strong>: Works with modern Keycloak servers (e.g., Keycloak 26).</li>
+                        <li><strong>PKCE</strong>: Use <code>pkceMethod: 'S256'</code> in <code>kc.init()</code> for
+                            SPAs.</li>
+                        <li><strong>Callback Mode</strong>: Prefer <code>responseMode: 'query'</code> to avoid hash
+                            fragments.</li>
+                        <li><strong>CORS</strong>: Configure <em>Valid Redirect URIs</em> and <em>Web Origins</em> on
+                            the Keycloak client (e.g., <code>http://localhost:4200/*</code> and
+                            <code>http://localhost:4200</code>).
+                        </li>
+                    </ul>
+                    <p class="mb-0 text-muted small">If you mix major versions, pin them and test login/refresh flows
+                        carefully.</p>
+                </div>
+            </div>
+
+            <!-- Minimal wiring (sample) -->
+            <div class="card shadow-sm mb-3">
+                <div class="card-body" style="min-height:10rem;">
+                    <h2 class="h5 mb-2">Minimal Wiring (Sample)</h2>
+                    <!-- Keep ngNonBindable to avoid Angular interpreting braces -->
+                    <pre class="mb-2 bg-light p-2 rounded" ngNonBindable><code>// keycloak.service.ts (conceptual)
+import Keycloak from 'keycloak-js';
+
+const kc = new Keycloak(&#123;
+  url: 'http://localhost:8080',
+  realm: 'pkce_realm',
+  clientId: 'pkce_client'
+&#125;);
+
+await kc.init(&#123;
+  pkceMethod: 'S256',
+  checkLoginIframe: false,
+  responseMode: 'query' // avoid #fragment
+&#125;);
+
+// Optional: attach token to HTTP calls via keycloak-angular interceptor</code></pre>
+                    <p class="mb-0 text-muted small">In Angular, inject your service or <code>KeycloakService</code>
+                        (from <code>keycloak-angular</code>) in components/guards.</p>
+                </div>
+            </div>
+
+            <!-- Common pitfalls / tips -->
+            <div class="card shadow-sm">
+                <div class="card-body" style="min-height:10rem;">
+                    <h2 class="h5 mb-2">Tips &amp; Pitfalls</h2>
+                    <ul class="mb-0">
+                        <li>Set <strong>Valid Redirect URIs</strong> and <strong>Web Origins</strong> in Keycloak to
+                            prevent CORS and callback errors.</li>
+                        <li>Use <strong>Authorization Code + PKCE</strong> (avoid implicit flow for SPAs).</li>
+                        <li>Keep access tokens short-lived; rely on refresh tokens for continuity.</li>
+                        <li>Prefer <code>/protocol/openid-connect/userinfo</code> over legacy <code>/account</code>
+                            endpoints for user claims.</li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

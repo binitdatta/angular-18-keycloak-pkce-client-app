@@ -1,0 +1,23 @@
+.list {
+    text-align: left;
+    max-width: 1650px;
+    margin: auto;
+  }
+
+    /* kill default horizontal gutters in this section if any nested rows appear */
+    .row.g-0>[class^="col"]>.row {
+      --bs-gutter-x: 0;
+    }
+  
+    /* make the right pane content scroll within the viewport height */
+    @media (min-width: 1200px) {
+      .overflow-auto {
+        max-height: calc(82vh - 1rem);
+      }
+    }
+
+        /* Scope a 20% bump to this page only */
+        .page-scale-120 {
+          /* rem inside this subtree will scale because we reset the root size context */
+          font-size: 140%;
+        }
